@@ -5,6 +5,7 @@ import googlemaps
 import datetime
 import logging
 import json
+import maps
 
 app = Flask(__name__)
 logger = logging.getLogger()
@@ -16,35 +17,24 @@ def is_request_valid(request):
     return is_token_valid
 
 
-def get_directions_duration(address_dep, address_arriv, name_dest):
-    """
-    Get the duration in traffic using Google Maps API
-    :param address_dep: departure address (as on Google Maps)
-    :param address_arriv: arrival address
-    :param name_dest: name of the destination
-    :return: text with the ETA
-    """
-    # Connect to the API
-    gmaps = googlemaps.Client(key=os.environ['GM_KEY'])
-    now = datetime.datetime.now()
-    # Compute the directions 
-    results = gmaps.directions(address_dep, address_arriv, mode="driving",departure_time=now)
-    directions_result = results[0]['legs'][0]
-    # Get resukts
-    duration = directions_result['duration_in_traffic']
-    t = f'Time to {name_dest} : %s _(%s to %s)_' % (duration['text'], directions_result['start_address'],  directions_result['end_address'])
-    return t
-
-
 @app.route('/travel-time', methods=['POST'])
 def travel_time():
     print(request)
     if not is_request_valid(request):
         abort(400)
-    
+    msg = request.form['text']
+    destinations = msg.split(';')
+    try:
+        t = maps.get_directions_duration(destinations[0].strip(), destinations[1].strip())
+    except:
+        return jsonify(
+            response_type='in_channel',
+            text='Invalid Address, Please re-enter.'
+        )
+
     return jsonify(
         response_type='in_channel',
-        text='Test Complete'
+        text= t
     )
 
 @app.route('/hello-there', methods=['POST'])
