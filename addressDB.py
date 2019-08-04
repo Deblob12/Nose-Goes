@@ -47,3 +47,4 @@ def storeMapping(user_id, mapping, address):
             }
 
         )
+

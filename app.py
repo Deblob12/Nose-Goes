@@ -65,7 +65,7 @@ def save():
     storeMapping(request.form['user_id'], mappings[0], mappings[1])
     return jsonify(
         response_type='in_channel',
-        text='{} can now be referred to as {}'.format(mappings[1], mappings[0])
+        text='{} can now be referred to as {}'.format(mappings[0], mappings[1])
     )
 @app.route('/ping', methods=['POST'])
 def response_data():
