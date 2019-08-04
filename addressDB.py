@@ -4,36 +4,46 @@ client = boto3.client('dynamodb')
 tablename = 'AddressMappings'
 def storeMapping(user_id, mapping, address):
     exists = True
-    try:
-        current = client.get_item(
-            TableName = tablename,
-            Key={
-                'user_id': {
-                    'S': user_id
-                }
+    current = client.get_item(
+        TableName = tablename,
+        Key={
+            'user_id': {
+                'S': user_id
             }
-        )
-    except:
-        exists = False
+        }
+    )
+
     
-    if not exists:
+    if 'Item' not in current:
         response = client.put_item(
             TableName = tablename,
             Item={
                 'user_id': {
                     'S': user_id
-                }
-                'mapping': {
-                    M: {mapping : {"S" : address}}
+                },
+                'mappings': {
+                    'L': [
+                        {"M": {mapping: {"S": address}}}
+                    ]
                 }
             }
 
         )
-    # response = client.update_item(
-    #     TableName = tablename,
-    #     Key={
-    #         'user_id': {
-    #             'S': user_id
-    #         }
-    #     },
-    )
+    else:
+        response = client.update_item(
+            TableName = tablename,
+            Key={
+                'user_id': {
+                    'S': user_id
+                }
+            },
+            UpdateExpression='SET mappings = list_append(mappings, :address_obj)',
+            ExpressionAttributeValues={
+                ':address_obj':{
+                    'L':[
+                        {"M": {mapping: {"S": address}}}
+                    ]
+                }
+            }
+
+        )

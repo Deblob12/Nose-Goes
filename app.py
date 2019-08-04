@@ -57,7 +57,7 @@ def save():
         abort(400)
     msg = request.form['text']
     mappings = msg.split(';')
-    if len(msg) != 2:
+    if len(mappings) != 2:
         return jsonify(
             repsonse_type='in_channel',
             text='Please enter nickname and address.'
