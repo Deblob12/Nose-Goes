@@ -47,4 +47,6 @@ def storeMapping(user_id, mapping, address):
             }
 
         )
+    def getMapping(user_id, mapping):
+        return
 
