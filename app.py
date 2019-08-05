@@ -5,7 +5,7 @@ import datetime
 import logging
 import json
 import maps
-from addressDB import storeMapping
+from addressDB import storeMapping, getMapping
 
 app = Flask(__name__)
 logger = logging.getLogger()
@@ -23,11 +23,20 @@ def travel_time():
         abort(400)
     msg = request.form['text']
     destinations = msg.split(';')
+    for i in range(len(destinations)):
+        destinations[i].strip().lower()
     if len(destinations) != 2:
         return jsonify(
             repsonse_type='in_channel',
             text='Please enter starting address and end address.'
         )
+    address1 = getMapping(request.form['user_id'], destinations[0])
+    address2 = getMapping(request.form['user_id'], destinations[1])
+    if type(address1) is str:
+        destinations[0] = address1
+    if type(address2) is str:
+        destinations[1] = address2
+    
     try:
         t = maps.get_directions_duration(destinations[0].strip(), destinations[1].strip())
     except:
@@ -62,7 +71,7 @@ def save():
             repsonse_type='in_channel',
             text='Please enter nickname and address.'
         )
-    storeMapping(request.form['user_id'], mappings[0], mappings[1])
+    storeMapping(request.form['user_id'], mappings[1].strip().lower(), mappings[0].strip().lower())
     return jsonify(
         response_type='in_channel',
         text='{} can now be referred to as {}'.format(mappings[0], mappings[1])
@@ -73,3 +82,15 @@ def response_data():
         response_type='in_channel',
         text='Server is up and running'
     )
+
+@app.route('/get-mapping', methods=['POST'])
+def get_mapper():
+    msg = request.form['text']
+    addresses = msg.strip().lower()
+    response1 = getMapping(request.form['user_id'], addresses)
+    print(response1)
+    return jsonify(
+        response_type='in_channel',
+        text = response1
+    )
+
