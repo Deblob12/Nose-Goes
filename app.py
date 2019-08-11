@@ -24,7 +24,8 @@ def travel_time():
     msg = request.form['text']
     destinations = msg.split(';')
     for i in range(len(destinations)):
-        destinations[i].strip().lower()
+        destinations[i] = destinations[i].strip().lower()
+        print(destinations[i])
     if len(destinations) != 2:
         return jsonify(
             repsonse_type='in_channel',
@@ -32,6 +33,7 @@ def travel_time():
         )
     address1 = getMapping(request.form['user_id'], destinations[0])
     address2 = getMapping(request.form['user_id'], destinations[1])
+    print(address1, address2)
     if type(address1) is str:
         destinations[0] = address1
     if type(address2) is str:
@@ -74,7 +76,7 @@ def save():
     storeMapping(request.form['user_id'], mappings[1].strip().lower(), mappings[0].strip().lower())
     return jsonify(
         response_type='in_channel',
-        text='{} can now be referred to as {}'.format(mappings[0], mappings[1])
+        text='{} can now be referred to as {}'.format(mappings[1], mappings[0])
     )
 @app.route('/ping', methods=['POST'])
 def response_data():

@@ -2,6 +2,8 @@ import boto3
 
 client = boto3.client('dynamodb')
 tablename = 'AddressMappings'
+
+
 def storeMapping(user_id, mapping, address):
     print(mapping, address)
     exists = True
