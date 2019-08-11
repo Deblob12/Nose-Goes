@@ -20,13 +20,19 @@ All addresses should follow GoogleMaps address convention. The more fields you f
 
 ![/travel-time Example](https://github.com/Deblob12/Nose-Goes/blob/master/usage/screenshots/travel-time.png "Travel-Time")
 
+#### Get Directions (and time):
+`/directions address1; address2`
+
+**Example:**
+
+![/directions Example](https://github.com/Deblob12/Nose-Goes/blob/master/usage/screenshots/directions.png "Directions")
+
 #### Save Address as Nickname:
 `/save nickname; address`
 
 **Example:**
 
 ![/save Example](https://github.com/Deblob12/Nose-Goes/blob/master/usage/screenshots/save.png "Save")
-
 
 ## Architecture:
 
