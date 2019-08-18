@@ -22,3 +22,6 @@ def get_directions(address_dep, address_arriv):
     directions_result = results[0]['legs'][0]['steps']
 
     return directions_result
+
+def get_geocode(address):
+    return (gmaps.geocode(address)[0]['geometry']['location']['lat'], gmaps.geocode(address)[0]['geometry']['location']['lng'])

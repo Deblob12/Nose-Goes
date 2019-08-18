@@ -140,3 +140,23 @@ def directions():
         text= txt
     )
 
+@app.route('/geocode', methods=['POST'])
+def geocode():
+    if not is_request_valid(request):
+        abort(400)
+    msg = request.form['text']
+    msg = msg.strip().lower()
+    address1 = getMapping(request.form['user_id'], msg)
+    if type(address1) is str:
+        msg = address1
+    try:
+        location = maps.get_geocode(msg)
+    except:
+        return jsonify(
+            response_type='in_channel',
+            text='Invalid Address.'
+        )
+    return jsonify(
+        response_type='in_channel',
+        text= str(location)
+    )
