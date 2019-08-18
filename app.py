@@ -160,3 +160,43 @@ def geocode():
         response_type='in_channel',
         text= str(location)
     )
+
+@app.route('/nose-goes', methods=['POST'])
+def nose_goes():
+    if not is_request_valid(request):
+        abort(400)
+    msg = request.form['text']
+    destinations = msg.split(';')
+    for i in range(len(destinations)):
+        destinations[i] = destinations[i].strip().lower()
+    if len(destinations) == 1:
+        destinations.append("")
+    if len(destinations) > 2:
+        return jsonify(
+            repsonse_type='in_channel',
+            text='Please enter starting address and end address.'
+        )
+    address1 = getMapping(request.form['user_id'], destinations[0])
+    if type(address1) is str:
+        destinations[0] = address1
+    destinations[0] = maps.get_geocode(destinations[0])
+    txt = []
+    results = maps.find_places(destinations[0], destinations[1])
+    try:
+        txt = []
+        for location in results:
+            tmp = ""
+            tmp += ('Name: ' + location['Name'] + '\n')
+            tmp += ('\t' + "Address: " + location['Address'] + '\n')
+            tmp += ('\t' + "Rating: " + str(location['Rating']) + '\n')
+            txt.append(tmp)
+        text = '\n'.join(txt)
+    except:
+        return jsonify(
+            response_type='in_channel',
+            text='Invalid Address.'
+        )
+    return jsonify(
+        response_type='in_channel',
+        text= text
+    )

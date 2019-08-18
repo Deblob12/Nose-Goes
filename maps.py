@@ -25,3 +25,20 @@ def get_directions(address_dep, address_arriv):
 
 def get_geocode(address):
     return (gmaps.geocode(address)[0]['geometry']['location']['lat'], gmaps.geocode(address)[0]['geometry']['location']['lng'])
+
+def find_places(location, query):
+    results = gmaps.places(query, location=location, radius=2000, open_now=True)['results']
+    places = []
+    for result in results:
+        tmp = {}
+        for keys in result:
+            if keys == 'formatted_address':
+                tmp['Address'] = result[keys]
+            elif keys == 'name':
+                tmp['Name'] = result[keys]
+            elif keys == 'rating':
+                tmp['Rating'] = result[keys]
+        places.append(tmp)
+    places.sort(key=lambda x: -x['Rating'])
+    return places
+
